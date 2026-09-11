@@ -1,0 +1,32 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/services" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      Servicios
+    </a>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Nuevo servicio</h1>
+        <p class="page-header__subtitle">
+          Programa un transporte institucional asignando vehículo y conductor.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-layout">
+      <%- include("../partials/form-errors", { errores }) %>
+      <%- include("./_form", { accion: "/services", esEdicion: false }) %>
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

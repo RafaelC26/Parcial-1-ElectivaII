@@ -1,0 +1,162 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Servicios</h1>
+        <p class="page-header__subtitle">Administra los transportes institucionales.</p>
+      </div>
+      <div class="page-header__actions">
+        <a href="/services/new" class="btn btn--primary">
+          <i data-lucide="plus"></i>
+          Nuevo servicio
+        </a>
+      </div>
+    </div>
+
+    <section class="card">
+
+      <form class="filters" method="GET" action="/services" data-filter-form>
+        <select name="estado" class="filters__select" aria-label="Filtrar por estado">
+          <option value="">Todos los estados</option>
+          <% estados.forEach(function (estado) { %>
+            <option value="<%= estado %>" <%= filtros.estado === estado ? "selected" : "" %>><%= estado %></option>
+          <% }); %>
+        </select>
+
+        <select name="tipo" class="filters__select" aria-label="Filtrar por tipo">
+          <option value="">Todos los tipos</option>
+          <% tipos.forEach(function (tipo) { %>
+            <option value="<%= tipo %>" <%= filtros.tipo === tipo ? "selected" : "" %>><%= tipo %></option>
+          <% }); %>
+        </select>
+
+        <select name="vehiculo" class="filters__select" aria-label="Filtrar por vehículo">
+          <option value="">Todos los vehículos</option>
+          <% vehiculos.forEach(function (vehiculo) { %>
+            <option value="<%= vehiculo._id %>"
+              <%= String(filtros.vehiculo) === String(vehiculo._id) ? "selected" : "" %>>
+              <%= vehiculo.placa %> — <%= vehiculo.marca %>
+            </option>
+          <% }); %>
+        </select>
+
+        <input type="date" name="fecha" class="filters__date"
+               value="<%= filtros.fecha %>" aria-label="Filtrar por fecha">
+
+        <% if (filtros.estado || filtros.tipo || filtros.fecha || filtros.vehiculo) { %>
+          <a href="/services" class="filters__reset">
+            <i data-lucide="x" style="width:14px;height:14px"></i>
+            Limpiar
+          </a>
+        <% } %>
+      </form>
+
+      <% if (services.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <i data-lucide="route" style="width:22px;height:22px"></i>
+          </div>
+          <% if (filtros.estado || filtros.tipo || filtros.fecha || filtros.vehiculo) { %>
+            <h3 class="empty-state__title">Sin resultados</h3>
+            <p class="empty-state__text">No se encontraron servicios con los filtros aplicados.</p>
+            <a href="/services" class="btn btn--secondary">Limpiar filtros</a>
+          <% } else { %>
+            <h3 class="empty-state__title">Aún no hay servicios registrados</h3>
+            <p class="empty-state__text">Programa el primer servicio de transporte.</p>
+            <a href="/services/new" class="btn btn--primary">
+              <i data-lucide="plus"></i>
+              Nuevo servicio
+            </a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Servicio</th>
+                <th>Ruta</th>
+                <th>Vehículo</th>
+                <th>Conductor</th>
+                <th class="text-right">Pasajeros</th>
+                <th>Estado</th>
+                <th class="shrink text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% services.forEach(function (servicio) { %>
+                <tr>
+                  <td><span class="code-chip"><%= servicio.codigo %></span></td>
+
+                  <td>
+                    <div class="cell-primary">
+                      <span class="cell-primary__title num"><%= formatDate(servicio.fecha) %></span>
+                      <span class="cell-primary__sub num">
+                        <%= formatTime(servicio.horaSalida) %> – <%= formatTime(servicio.horaRegreso) %>
+                      </span>
+                    </div>
+                  </td>
+
+                  <td class="text-secondary"><%= servicio.tipoServicio %></td>
+
+                  <td>
+                    <span class="route">
+                      <strong><%= servicio.origen %></strong>
+                      <i data-lucide="arrow-right" style="width:13px;height:13px"></i>
+                      <strong><%= servicio.destino %></strong>
+                    </span>
+                  </td>
+
+                  <td>
+                    <% if (servicio.vehiculo) { %>
+                      <span class="plate"><%= servicio.vehiculo.placa %></span>
+                    <% } else { %>
+                      <span class="text-muted">—</span>
+                    <% } %>
+                  </td>
+
+                  <td><%= servicio.conductor ? truncar(servicio.conductor.nombre, 20) : "—" %></td>
+
+                  <td class="num text-right"><%= servicio.pasajeros %></td>
+
+                  <td>
+                    <span class="badge <%= badgeClass(servicio.enCursoAhora ? 'En curso' : servicio.estado) %>">
+                      <%= servicio.enCursoAhora ? "En curso" : servicio.estado %>
+                    </span>
+                  </td>
+
+                  <td class="shrink">
+                    <div class="table-actions">
+                      <a href="/services/<%= servicio._id %>" class="btn btn--secondary btn--sm">Ver</a>
+                      <a href="/services/<%= servicio._id %>/edit"
+                         class="btn btn--ghost btn--sm btn--icon" aria-label="Editar servicio">
+                        <i data-lucide="pencil" style="width:15px;height:15px"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-count">
+          <%= services.length %> servicio<%= services.length === 1 ? "" : "s" %>
+          <%= (filtros.estado || filtros.tipo || filtros.fecha || filtros.vehiculo) ? "encontrados" : "registrados" %>
+        </div>
+      <% } %>
+
+    </section>
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

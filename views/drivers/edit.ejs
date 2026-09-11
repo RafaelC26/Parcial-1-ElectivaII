@@ -1,0 +1,136 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/drivers/<%= conductor._id %>" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      <%= conductor.nombre %>
+    </a>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Editar conductor</h1>
+        <p class="page-header__subtitle">
+          Actualiza la información de <strong><%= conductor.nombre %></strong>.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-layout">
+      <%- include("../partials/form-errors", { errores }) %>
+
+      <form method="POST" action="/drivers/<%= conductor._id %>/update" data-submit-once novalidate>
+
+        <section class="card card--pad form-section">
+          <h2 class="form-section__title">Información personal</h2>
+          <p class="form-section__hint">Identificación y datos de contacto.</p>
+
+          <div class="form-grid">
+            <div class="field field--full">
+              <label class="field__label" for="nombre">
+                Nombre completo <span class="field__required">*</span>
+              </label>
+              <input type="text" id="nombre" name="nombre" class="input"
+                     value="<%= valores.nombre || '' %>" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="tipoDocumento">Tipo de documento</label>
+              <select id="tipoDocumento" name="tipoDocumento" class="select">
+                <% tiposDocumento.forEach(function (tipo) { %>
+                  <option value="<%= tipo %>" <%= valores.tipoDocumento === tipo ? "selected" : "" %>><%= tipo %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="documento">
+                Número de documento <span class="field__required">*</span>
+              </label>
+              <input type="text" id="documento" name="documento" class="input"
+                     value="<%= valores.documento || '' %>" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="telefono">
+                Teléfono <span class="field__required">*</span>
+              </label>
+              <input type="tel" id="telefono" name="telefono" class="input"
+                     value="<%= valores.telefono || '' %>" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="correo">Correo electrónico</label>
+              <input type="email" id="correo" name="correo" class="input"
+                     value="<%= valores.correo || '' %>">
+            </div>
+          </div>
+        </section>
+
+        <section class="card card--pad form-section">
+          <h2 class="form-section__title">Licencia de conducción</h2>
+          <p class="form-section__hint">
+            Un conductor con licencia vencida no puede ser asignado a servicios.
+          </p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="licencia">
+                Número de licencia <span class="field__required">*</span>
+              </label>
+              <input type="text" id="licencia" name="licencia" class="input"
+                     value="<%= valores.licencia || '' %>" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="categoriaLicencia">
+                Categoría <span class="field__required">*</span>
+              </label>
+              <select id="categoriaLicencia" name="categoriaLicencia" class="select" required>
+                <% categorias.forEach(function (categoria) { %>
+                  <option value="<%= categoria %>"
+                    <%= valores.categoriaLicencia === categoria ? "selected" : "" %>><%= categoria %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="vencimientoLicencia">
+                Fecha de vencimiento <span class="field__required">*</span>
+              </label>
+              <input type="date" id="vencimientoLicencia" name="vencimientoLicencia" class="input"
+                     value="<%= toDateInput(valores.vencimientoLicencia) %>" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="estado">Estado</label>
+              <select id="estado" name="estado" class="select">
+                <% estados.forEach(function (estado) { %>
+                  <option value="<%= estado %>" <%= valores.estado === estado ? "selected" : "" %>><%= estado %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="field field--full">
+              <label class="field__label" for="observaciones">Observaciones</label>
+              <textarea id="observaciones" name="observaciones" class="textarea"><%= valores.observaciones || "" %></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="/drivers/<%= conductor._id %>" class="btn btn--secondary">Cancelar</a>
+            <button type="submit" class="btn btn--primary">Guardar cambios</button>
+          </div>
+        </section>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

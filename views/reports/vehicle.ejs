@@ -1,0 +1,215 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Informes</h1>
+        <p class="page-header__subtitle">
+          Consulta el historial de servicios realizado por cada vehículo.
+        </p>
+      </div>
+      <% if (consultaRealizada && services.length > 0) { %>
+        <div class="page-header__actions">
+          <button type="button" class="btn btn--secondary" onclick="window.print()">
+            <i data-lucide="printer"></i>
+            Imprimir
+          </button>
+        </div>
+      <% } %>
+    </div>
+
+    <%- include("../partials/form-errors", { errores }) %>
+
+    <!-- -------------------------------- Filtros ------------------------------- -->
+    <section class="card card--pad no-print" style="margin-bottom:var(--space-6)">
+      <form method="GET" action="/reports/vehicle">
+        <div class="form-grid form-grid--three">
+          <div class="field">
+            <label class="field__label" for="vehicleId">
+              Vehículo <span class="field__required">*</span>
+            </label>
+            <select id="vehicleId" name="vehicleId" class="select" required>
+              <option value="">Seleccionar vehículo</option>
+              <% vehiculos.forEach(function (v) { %>
+                <option value="<%= v._id %>"
+                  <%= String(filtros.vehicleId) === String(v._id) ? "selected" : "" %>>
+                  <%= v.placa %> — <%= v.marca %> <%= v.modelo %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="startDate">
+              Fecha inicial <span class="field__required">*</span>
+            </label>
+            <input type="date" id="startDate" name="startDate" class="input"
+                   value="<%= filtros.startDate %>" required>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="endDate">
+              Fecha final <span class="field__required">*</span>
+            </label>
+            <input type="date" id="endDate" name="endDate" class="input"
+                   value="<%= filtros.endDate %>" required>
+          </div>
+        </div>
+
+        <div class="form-actions" style="margin-top:var(--space-6);padding-top:var(--space-5)">
+          <% if (consultaRealizada) { %>
+            <a href="/reports" class="btn btn--secondary">Limpiar</a>
+          <% } %>
+          <button type="submit" class="btn btn--primary">
+            <i data-lucide="file-text"></i>
+            Generar informe
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ------------------------------- Resultados ----------------------------- -->
+    <% if (!consultaRealizada) { %>
+
+      <section class="card">
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <i data-lucide="file-text" style="width:22px;height:22px"></i>
+          </div>
+          <h3 class="empty-state__title">Genera un informe</h3>
+          <p class="empty-state__text">
+            Selecciona un vehículo y un rango de fechas para consultar los servicios
+            realizados en ese periodo.
+          </p>
+        </div>
+      </section>
+
+    <% } else { %>
+
+      <!-- Cabecera del informe -->
+      <section class="card card--pad" style="margin-bottom:var(--space-6)">
+        <div class="row between wrap" style="gap:var(--space-6);align-items:flex-start">
+          <div>
+            <h2 class="section-title" style="margin-bottom:var(--space-4)">Informe de servicios</h2>
+            <div class="summary-grid" style="min-width:280px">
+              <div class="summary-item">
+                <div class="summary-item__label">Vehículo</div>
+                <div class="summary-item__value">
+                  <%= vehiculo.marca %> <%= vehiculo.modelo %>
+                </div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-item__label">Placa</div>
+                <div class="summary-item__value"><%= vehiculo.placa %></div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-item__label">Periodo</div>
+                <div class="summary-item__value">
+                  <%= formatLongDate(periodo.desde) %> — <%= formatLongDate(periodo.hasta) %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Indicadores -->
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item__label">Servicios realizados</div>
+            <div class="summary-item__value summary-item__value--lg">
+              <%= indicadores.totalServicios %>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Pasajeros transportados</div>
+            <div class="summary-item__value summary-item__value--lg">
+              <%= formatNumber(indicadores.totalPasajeros) %>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Destinos visitados</div>
+            <div class="summary-item__value summary-item__value--lg">
+              <%= indicadores.destinosVisitados %>
+            </div>
+          </div>
+          <% if (indicadores.cancelados > 0) { %>
+            <div class="summary-item">
+              <div class="summary-item__label">Cancelados</div>
+              <div class="summary-item__value summary-item__value--lg" style="color:var(--text-muted)">
+                <%= indicadores.cancelados %>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- Detalle -->
+      <section class="card">
+        <% if (services.length === 0) { %>
+          <div class="empty-state">
+            <div class="empty-state__icon">
+              <i data-lucide="calendar-off" style="width:22px;height:22px"></i>
+            </div>
+            <h3 class="empty-state__title">Sin servicios en el periodo</h3>
+            <p class="empty-state__text">
+              No se encontraron servicios para el vehículo seleccionado durante este periodo.
+              Prueba ampliando el rango de fechas.
+            </p>
+            <a href="/reports" class="btn btn--secondary no-print">Cambiar filtros</a>
+          </div>
+        <% } else { %>
+          <div class="card__header">
+            <h2 class="card__title">Detalle de servicios</h2>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Destino</th>
+                  <th>Conductor</th>
+                  <th class="text-right">Pasajeros</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% services.forEach(function (servicio) { %>
+                  <tr>
+                    <td><span class="code-chip"><%= servicio.codigo %></span></td>
+                    <td class="num"><%= formatDate(servicio.fecha) %></td>
+                    <td class="text-secondary"><%= servicio.tipoServicio %></td>
+                    <td><%= servicio.destino %></td>
+                    <td><%= servicio.conductor ? servicio.conductor.nombre : "—" %></td>
+                    <td class="num text-right"><%= servicio.pasajeros %></td>
+                    <td>
+                      <span class="badge <%= badgeClass(servicio.estado) %>"><%= servicio.estado %></span>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="result-count">
+            <%= services.length %> servicio<%= services.length === 1 ? "" : "s" %> en el periodo consultado
+          </div>
+        <% } %>
+      </section>
+
+    <% } %>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,24 @@
+<%
+  /* Bloque de errores de validación mostrado dentro de los formularios. */
+%>
+<% if (typeof errores !== "undefined" && errores && errores.length > 0) { %>
+  <div class="alert alert--error" role="alert">
+    <span class="alert__icon">
+      <i data-lucide="alert-circle" style="width:18px;height:18px"></i>
+    </span>
+    <div>
+      <div class="alert__title">
+        <% if (errores.length === 1) { %>
+          Revisa la información ingresada
+        <% } else { %>
+          Revisa <%= errores.length %> puntos antes de continuar
+        <% } %>
+      </div>
+      <ul class="alert__list">
+        <% errores.forEach(function (mensaje) { %>
+          <li><%= mensaje %></li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+<% } %>

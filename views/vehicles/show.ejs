@@ -1,0 +1,257 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/vehicles" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      Vehículos
+    </a>
+
+    <!-- ------------------------------ Cabecera ------------------------------ -->
+    <div class="detail-header">
+      <div class="detail-header__main">
+        <div class="detail-header__icon">
+          <i data-lucide="<%= iconoVehiculo(vehiculo.tipo) %>" style="width:24px;height:24px"></i>
+        </div>
+        <div>
+          <h1 class="detail-header__title"><%= vehiculo.marca %> <%= vehiculo.modelo %></h1>
+          <div class="detail-header__sub">
+            <span class="plate"><%= vehiculo.placa %></span>
+            <span class="badge <%= badgeClass(estadoActual) %>"><%= estadoActual %></span>
+            <% if (estadoActual !== vehiculo.estado) { %>
+              <span class="text-muted text-sm">(estado operativo: <%= vehiculo.estado %>)</span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-header__actions detail-header__actions">
+        <a href="/vehicles/<%= vehiculo._id %>/edit" class="btn btn--secondary">
+          <i data-lucide="pencil"></i>
+          Editar vehículo
+        </a>
+        <form method="POST" action="/vehicles/<%= vehiculo._id %>/delete"
+              data-confirm="¿Estás seguro de eliminar el vehículo <%= vehiculo.placa %>?"
+              data-confirm-title="Eliminar vehículo"
+              style="display:inline">
+          <button type="submit" class="btn btn--danger-soft">
+            <i data-lucide="trash-2"></i>
+            Eliminar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="stack stack-6">
+
+      <!-- --------------------------- Información --------------------------- -->
+      <section class="card card--pad">
+        <h2 class="section-title" style="margin-bottom:var(--space-5)">Información general</h2>
+
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item__label">Tipo</div>
+            <div class="summary-item__value"><%= vehiculo.tipo %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Marca</div>
+            <div class="summary-item__value"><%= vehiculo.marca %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Modelo</div>
+            <div class="summary-item__value"><%= vehiculo.modelo %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Año</div>
+            <div class="summary-item__value num"><%= vehiculo.anio %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Capacidad</div>
+            <div class="summary-item__value num"><%= vehiculo.capacidad %> pasajeros</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Kilometraje</div>
+            <div class="summary-item__value num"><%= formatNumber(vehiculo.kilometraje) %> km</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Último mantenimiento</div>
+            <div class="summary-item__value num">
+              <%= mantenimientos.length > 0 ? formatDate(mantenimientos[0].fecha) : "—" %>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Servicios registrados</div>
+            <div class="summary-item__value num"><%= servicios.length %></div>
+          </div>
+        </div>
+
+        <% if (vehiculo.observaciones && vehiculo.observaciones.trim()) { %>
+          <hr class="divider">
+          <div class="summary-item">
+            <div class="summary-item__label">Observaciones</div>
+            <div class="summary-item__value text-secondary"><%= vehiculo.observaciones %></div>
+          </div>
+        <% } %>
+      </section>
+
+      <!-- ----------------------- Servicios realizados ---------------------- -->
+      <section class="card">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Servicios realizados</h2>
+            <p class="section-subtitle">Últimos <%= servicios.length %> registros</p>
+          </div>
+          <a href="/services?vehiculo=<%= vehiculo._id %>" class="btn btn--ghost btn--sm">
+            Ver todos
+            <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+
+        <% if (servicios.length === 0) { %>
+          <div class="empty-state" style="padding:var(--space-10) var(--space-6)">
+            <div class="empty-state__icon">
+              <i data-lucide="route" style="width:22px;height:22px"></i>
+            </div>
+            <h3 class="empty-state__title">Sin servicios registrados</h3>
+            <p class="empty-state__text">Este vehículo aún no ha sido asignado a ningún servicio.</p>
+            <a href="/services/new" class="btn btn--primary">
+              <i data-lucide="plus"></i>
+              Programar servicio
+            </a>
+          </div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Fecha</th>
+                  <th>Servicio</th>
+                  <th>Ruta</th>
+                  <th>Conductor</th>
+                  <th class="text-right">Pasajeros</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% servicios.forEach(function (servicio) { %>
+                  <tr onclick="window.location='/services/<%= servicio._id %>'" style="cursor:pointer">
+                    <td><span class="code-chip"><%= servicio.codigo %></span></td>
+                    <td class="num"><%= formatDate(servicio.fecha) %></td>
+                    <td class="text-secondary"><%= servicio.tipoServicio %></td>
+                    <td>
+                      <span class="route">
+                        <strong><%= servicio.origen %></strong>
+                        <i data-lucide="arrow-right" style="width:13px;height:13px"></i>
+                        <strong><%= servicio.destino %></strong>
+                      </span>
+                    </td>
+                    <td><%= servicio.conductor ? truncar(servicio.conductor.nombre, 24) : "—" %></td>
+                    <td class="num text-right"><%= servicio.pasajeros %></td>
+                    <td>
+                      <span class="badge <%= badgeClass(servicio.estado) %>"><%= servicio.estado %></span>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+
+      <!-- -------------------- Historial de mantenimiento ------------------- -->
+      <section class="card">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Historial de mantenimiento</h2>
+            <p class="section-subtitle">
+              <%= mantenimientos.length %> registro<%= mantenimientos.length === 1 ? "" : "s" %>
+            </p>
+          </div>
+          <a href="/vehicles/<%= vehiculo._id %>/maintenance/new" class="btn btn--secondary btn--sm">
+            <i data-lucide="plus" style="width:14px;height:14px"></i>
+            Registrar mantenimiento
+          </a>
+        </div>
+
+        <% if (mantenimientos.length === 0) { %>
+          <div class="empty-state" style="padding:var(--space-10) var(--space-6)">
+            <div class="empty-state__icon">
+              <i data-lucide="wrench" style="width:22px;height:22px"></i>
+            </div>
+            <h3 class="empty-state__title">Sin mantenimientos registrados</h3>
+            <p class="empty-state__text">
+              Lleva el control de los mantenimientos preventivos y correctivos de este vehículo.
+            </p>
+            <a href="/vehicles/<%= vehiculo._id %>/maintenance/new" class="btn btn--primary">
+              <i data-lucide="plus"></i>
+              Registrar mantenimiento
+            </a>
+          </div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Kilometraje</th>
+                  <th>Descripción</th>
+                  <th>Proveedor</th>
+                  <th class="text-right">Costo</th>
+                  <th>Próximo</th>
+                  <th class="shrink text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% mantenimientos.forEach(function (item) { %>
+                  <tr>
+                    <td class="num"><%= formatDate(item.fecha) %></td>
+                    <td>
+                      <span class="badge badge--neutral badge--plain"><%= item.tipo %></span>
+                    </td>
+                    <td class="num text-secondary">
+                      <%= item.kilometraje != null ? formatNumber(item.kilometraje) + " km" : "—" %>
+                    </td>
+                    <td class="cell-clamp" title="<%= item.descripcion %>">
+                      <%= truncar(item.descripcion, 40) %>
+                    </td>
+                    <td class="text-secondary"><%= item.proveedor || "—" %></td>
+                    <td class="num text-right"><%= formatCurrency(item.costo) %></td>
+                    <td class="num text-secondary"><%= formatDate(item.proximoMantenimiento) %></td>
+                    <td class="shrink">
+                      <div class="table-actions">
+                        <a href="/maintenance/<%= item._id %>/edit"
+                           class="btn btn--ghost btn--sm btn--icon" aria-label="Editar mantenimiento">
+                          <i data-lucide="pencil" style="width:15px;height:15px"></i>
+                        </a>
+                        <form method="POST" action="/maintenance/<%= item._id %>/delete"
+                              data-confirm="¿Eliminar este registro de mantenimiento del <%= formatDate(item.fecha) %>?"
+                              data-confirm-title="Eliminar mantenimiento"
+                              style="display:inline">
+                          <button type="submit" class="btn btn--ghost btn--sm btn--icon"
+                                  aria-label="Eliminar mantenimiento">
+                            <i data-lucide="trash-2" style="width:15px;height:15px"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

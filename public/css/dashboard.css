@@ -1,0 +1,216 @@
+/* ==========================================================================
+   Dashboard: KPI cards, estado de la flota, paneles laterales
+   ========================================================================== */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-6);
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition-card);
+  display: block;
+  color: inherit;
+}
+
+.kpi:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  color: inherit;
+}
+
+.kpi__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.kpi__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.kpi__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.kpi__icon--primary { background: var(--primary-soft); color: var(--primary); }
+.kpi__icon--success { background: var(--success-soft); color: var(--success); }
+.kpi__icon--accent  { background: var(--accent-soft);  color: #a97d14; }
+.kpi__icon--info    { background: var(--info-soft);    color: var(--info); }
+
+.kpi__value {
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi__unit {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* ----------------------------- Grid principal ----------------------------- */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* --------------------------- Estado de la flota --------------------------- */
+
+.fleet-list { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.fleet-row { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.fleet-row__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.fleet-row__label { display: flex; align-items: center; gap: var(--space-2); color: var(--text-secondary); }
+
+.fleet-row__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fleet-row__value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.fleet-bar {
+  height: 6px;
+  background: var(--surface-hover);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.fleet-bar__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 400ms ease;
+  min-width: 0;
+}
+
+.fleet--disponible .fleet-row__dot,
+.fleet--disponible .fleet-bar__fill { background: var(--success); }
+
+.fleet--servicio .fleet-row__dot,
+.fleet--servicio .fleet-bar__fill { background: var(--info); }
+
+.fleet--mantenimiento .fleet-row__dot,
+.fleet--mantenimiento .fleet-bar__fill { background: var(--warning); }
+
+.fleet--fuera .fleet-row__dot,
+.fleet--fuera .fleet-bar__fill { background: var(--text-muted); }
+
+/* ------------------------------ Panel lateral ----------------------------- */
+
+.mini-list { display: flex; flex-direction: column; }
+
+.mini-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  color: inherit;
+}
+
+.mini-item + .mini-item { border-top: 1px solid var(--border); }
+.mini-item:hover { color: inherit; }
+.mini-item:hover .mini-item__title { color: var(--primary); }
+
+.mini-item__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+}
+
+.mini-item__icon--warning { background: var(--warning-soft); color: var(--warning); }
+
+.mini-item__body { min-width: 0; flex: 1; }
+
+.mini-item__title {
+  font-size: var(--text-base);
+  font-weight: 500;
+  transition: var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-item__meta {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.mini-item__side {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* Resumen compacto de dos columnas (detalle de servicio, informes) */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-5) var(--space-6);
+}
+
+.summary-item__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.summary-item__value {
+  font-size: var(--text-md);
+  color: var(--text-primary);
+}
+
+.summary-item__value--lg {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}

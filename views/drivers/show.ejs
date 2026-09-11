@@ -1,0 +1,193 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/drivers" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      Conductores
+    </a>
+
+    <!-- ------------------------------ Cabecera ------------------------------ -->
+    <div class="detail-header">
+      <div class="detail-header__main">
+        <div class="detail-header__icon"><%= iniciales(conductor.nombre) %></div>
+        <div>
+          <h1 class="detail-header__title"><%= conductor.nombre %></h1>
+          <div class="detail-header__sub">
+            <span class="text-secondary">
+              <%= conductor.tipoDocumento %> <%= conductor.documentoFormateado %>
+            </span>
+            <span class="badge <%= badgeClass(estadoActual) %>"><%= estadoActual %></span>
+            <% if (conductor.licenciaVencida) { %>
+              <span class="badge badge--danger">Licencia vencida</span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-header__actions detail-header__actions">
+        <a href="/drivers/<%= conductor._id %>/edit" class="btn btn--secondary">
+          <i data-lucide="pencil"></i>
+          Editar conductor
+        </a>
+        <form method="POST" action="/drivers/<%= conductor._id %>/delete"
+              data-confirm="¿Estás seguro de eliminar al conductor <%= conductor.nombre %>?"
+              data-confirm-title="Eliminar conductor"
+              style="display:inline">
+          <button type="submit" class="btn btn--danger-soft">
+            <i data-lucide="trash-2"></i>
+            Eliminar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <% if (conductor.licenciaVencida) { %>
+      <div class="alert alert--error" role="alert">
+        <span class="alert__icon">
+          <i data-lucide="alert-circle" style="width:18px;height:18px"></i>
+        </span>
+        <div>
+          <div class="alert__title">Licencia vencida</div>
+          No es posible asignar este conductor porque su licencia de conducción se encuentra vencida
+          desde el <%= formatDate(conductor.vencimientoLicencia) %>.
+        </div>
+      </div>
+    <% } %>
+
+    <div class="stack stack-6">
+
+      <!-- --------------------------- Información --------------------------- -->
+      <section class="card card--pad">
+        <h2 class="section-title" style="margin-bottom:var(--space-5)">Información</h2>
+
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item__label">Documento</div>
+            <div class="summary-item__value num">
+              <%= conductor.tipoDocumento %> <%= conductor.documentoFormateado %>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Licencia</div>
+            <div class="summary-item__value"><%= conductor.licencia %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Categoría</div>
+            <div class="summary-item__value"><%= conductor.categoriaLicencia %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Vencimiento</div>
+            <div class="summary-item__value">
+              <% if (conductor.licenciaVencida) { %>
+                <span class="badge badge--danger"><%= formatDate(conductor.vencimientoLicencia) %></span>
+              <% } else { %>
+                <span class="num"><%= formatDate(conductor.vencimientoLicencia) %></span>
+              <% } %>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Teléfono</div>
+            <div class="summary-item__value num"><%= conductor.telefono %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Correo</div>
+            <div class="summary-item__value"><%= conductor.correo || "—" %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Servicios asignados</div>
+            <div class="summary-item__value num"><%= servicios.length %></div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item__label">Registrado</div>
+            <div class="summary-item__value num"><%= formatDate(conductor.createdAt) %></div>
+          </div>
+        </div>
+
+        <% if (conductor.observaciones && conductor.observaciones.trim()) { %>
+          <hr class="divider">
+          <div class="summary-item">
+            <div class="summary-item__label">Observaciones</div>
+            <div class="summary-item__value text-secondary"><%= conductor.observaciones %></div>
+          </div>
+        <% } %>
+      </section>
+
+      <!-- ------------------------ Servicios asignados ---------------------- -->
+      <section class="card">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Servicios asignados</h2>
+            <p class="section-subtitle">Últimos <%= servicios.length %> registros</p>
+          </div>
+        </div>
+
+        <% if (servicios.length === 0) { %>
+          <div class="empty-state" style="padding:var(--space-10) var(--space-6)">
+            <div class="empty-state__icon">
+              <i data-lucide="route" style="width:22px;height:22px"></i>
+            </div>
+            <h3 class="empty-state__title">Sin servicios asignados</h3>
+            <p class="empty-state__text">Este conductor aún no ha sido asignado a ningún servicio.</p>
+            <a href="/services/new" class="btn btn--primary">
+              <i data-lucide="plus"></i>
+              Programar servicio
+            </a>
+          </div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Fecha</th>
+                  <th>Servicio</th>
+                  <th>Ruta</th>
+                  <th>Vehículo</th>
+                  <th class="text-right">Pasajeros</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% servicios.forEach(function (servicio) { %>
+                  <tr onclick="window.location='/services/<%= servicio._id %>'" style="cursor:pointer">
+                    <td><span class="code-chip"><%= servicio.codigo %></span></td>
+                    <td class="num"><%= formatDate(servicio.fecha) %></td>
+                    <td class="text-secondary"><%= servicio.tipoServicio %></td>
+                    <td>
+                      <span class="route">
+                        <strong><%= servicio.origen %></strong>
+                        <i data-lucide="arrow-right" style="width:13px;height:13px"></i>
+                        <strong><%= servicio.destino %></strong>
+                      </span>
+                    </td>
+                    <td>
+                      <% if (servicio.vehiculo) { %>
+                        <span class="plate"><%= servicio.vehiculo.placa %></span>
+                      <% } else { %>
+                        <span class="text-muted">—</span>
+                      <% } %>
+                    </td>
+                    <td class="num text-right"><%= servicio.pasajeros %></td>
+                    <td>
+                      <span class="badge <%= badgeClass(servicio.estado) %>"><%= servicio.estado %></span>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

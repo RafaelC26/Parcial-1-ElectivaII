@@ -1,0 +1,33 @@
+{
+  "name": "uptc-transportes",
+  "version": "1.0.0",
+  "description": "Sistema de Informacion para Gestion de Transporte - UPTC Seccional Sogamoso",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node scripts/seed.js"
+  },
+  "keywords": [
+    "uptc",
+    "transporte",
+    "express",
+    "mongoose",
+    "ejs"
+  ],
+  "author": "Rafael Cristancho",
+  "license": "MIT",
+  "dependencies": {
+    "connect-flash": "^0.1.1",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.9.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

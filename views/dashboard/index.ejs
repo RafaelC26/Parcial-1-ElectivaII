@@ -1,0 +1,275 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <!-- ------------------------------ Encabezado ------------------------------ -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Gestión de Transporte</h1>
+        <p class="page-header__subtitle">
+          Administra la operación de transporte de la Seccional Sogamoso.
+        </p>
+        <p class="page-header__meta"><%= fechaHoy %></p>
+      </div>
+
+      <div class="page-header__actions">
+        <a href="/services/new" class="btn btn--primary">
+          <i data-lucide="plus"></i>
+          Nuevo servicio
+        </a>
+      </div>
+    </div>
+
+    <!-- --------------------------------- KPIs --------------------------------- -->
+    <section class="kpi-grid">
+      <a href="/vehicles" class="kpi">
+        <div class="kpi__head">
+          <span class="kpi__label">Vehículos</span>
+          <span class="kpi__icon kpi__icon--primary">
+            <i data-lucide="bus-front" style="width:16px;height:16px"></i>
+          </span>
+        </div>
+        <div class="kpi__value"><%= kpis.totalVehiculos %></div>
+        <div class="kpi__unit">registrados</div>
+      </a>
+
+      <a href="/vehicles?estado=Disponible" class="kpi">
+        <div class="kpi__head">
+          <span class="kpi__label">Disponibles</span>
+          <span class="kpi__icon kpi__icon--success">
+            <i data-lucide="circle-check" style="width:16px;height:16px"></i>
+          </span>
+        </div>
+        <div class="kpi__value"><%= kpis.vehiculosDisponibles %></div>
+        <div class="kpi__unit">vehículos</div>
+      </a>
+
+      <a href="/services" class="kpi">
+        <div class="kpi__head">
+          <span class="kpi__label">Servicios hoy</span>
+          <span class="kpi__icon kpi__icon--accent">
+            <i data-lucide="calendar" style="width:16px;height:16px"></i>
+          </span>
+        </div>
+        <div class="kpi__value"><%= kpis.serviciosHoy %></div>
+        <div class="kpi__unit">
+          programados<% if (kpis.serviciosEnCurso > 0) { %> · <%= kpis.serviciosEnCurso %> en curso<% } %>
+        </div>
+      </a>
+
+      <a href="/drivers" class="kpi">
+        <div class="kpi__head">
+          <span class="kpi__label">Conductores</span>
+          <span class="kpi__icon kpi__icon--info">
+            <i data-lucide="users" style="width:16px;height:16px"></i>
+          </span>
+        </div>
+        <div class="kpi__value"><%= kpis.conductoresActivos %></div>
+        <div class="kpi__unit">activos</div>
+      </a>
+    </section>
+
+    <!-- ------------------------------ Contenido ------------------------------- -->
+    <div class="dashboard-grid">
+
+      <!-- Próximos servicios -->
+      <section class="card">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Próximos servicios</h2>
+            <p class="section-subtitle">Transportes programados que aún no finalizan</p>
+          </div>
+          <a href="/services" class="btn btn--ghost btn--sm">
+            Ver todos
+            <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+
+        <% if (proximosServicios.length === 0) { %>
+          <div class="empty-state">
+            <div class="empty-state__icon">
+              <i data-lucide="calendar-off" style="width:22px;height:22px"></i>
+            </div>
+            <h3 class="empty-state__title">Aún no hay servicios programados</h3>
+            <p class="empty-state__text">Programa el primer servicio de transporte institucional.</p>
+            <a href="/services/new" class="btn btn--primary">
+              <i data-lucide="plus"></i>
+              Nuevo servicio
+            </a>
+          </div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Hora</th>
+                  <th>Servicio</th>
+                  <th>Ruta</th>
+                  <th>Vehículo</th>
+                  <th>Conductor</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% proximosServicios.forEach(function (servicio) { %>
+                  <tr onclick="window.location='/services/<%= servicio._id %>'" style="cursor:pointer">
+                    <td class="num font-semibold"><%= formatTime(servicio.horaSalida) %></td>
+
+                    <td>
+                      <div class="cell-primary">
+                        <span class="cell-primary__title"><%= servicio.tipoServicio %></span>
+                        <span class="cell-primary__sub"><%= formatDate(servicio.fecha) %></span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <span class="route">
+                        <strong><%= servicio.origen %></strong>
+                        <i data-lucide="arrow-right" style="width:13px;height:13px"></i>
+                        <strong><%= servicio.destino %></strong>
+                      </span>
+                    </td>
+
+                    <td>
+                      <% if (servicio.vehiculo) { %>
+                        <span class="plate"><%= servicio.vehiculo.placa %></span>
+                      <% } else { %>
+                        <span class="text-muted">—</span>
+                      <% } %>
+                    </td>
+
+                    <td><%= servicio.conductor ? truncar(servicio.conductor.nombre, 22) : "—" %></td>
+
+                    <td>
+                      <span class="badge <%= badgeClass(servicio.enCursoAhora ? 'En curso' : servicio.estado) %>">
+                        <%= servicio.enCursoAhora ? "En curso" : servicio.estado %>
+                      </span>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+
+      <!-- Columna lateral -->
+      <div class="stack stack-6">
+
+        <!-- Estado de la flota -->
+        <section class="card">
+          <div class="card__header">
+            <h2 class="card__title">Estado de la flota</h2>
+          </div>
+          <div class="card__body">
+            <% if (kpis.totalVehiculos === 0) { %>
+              <p class="text-secondary text-sm">Aún no hay vehículos registrados.</p>
+            <% } else { %>
+              <div class="fleet-list">
+                <%
+                  const claseFlota = {
+                    "Disponible": "fleet--disponible",
+                    "En servicio": "fleet--servicio",
+                    "En mantenimiento": "fleet--mantenimiento",
+                    "Fuera de servicio": "fleet--fuera"
+                  };
+                %>
+                <% estadoFlota.forEach(function (fila) { %>
+                  <%
+                    const porcentaje = kpis.totalVehiculos > 0
+                      ? Math.round((fila.total / kpis.totalVehiculos) * 100)
+                      : 0;
+                  %>
+                  <div class="fleet-row <%= claseFlota[fila.estado] %>">
+                    <div class="fleet-row__head">
+                      <span class="fleet-row__label">
+                        <span class="fleet-row__dot"></span>
+                        <%= fila.estado %>
+                      </span>
+                      <span class="fleet-row__value"><%= fila.total %></span>
+                    </div>
+                    <div class="fleet-bar">
+                      <div class="fleet-bar__fill" style="width: <%= porcentaje %>%"></div>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } %>
+          </div>
+        </section>
+
+        <!-- Licencias por vencer -->
+        <% if (licenciasPorVencer.length > 0) { %>
+          <section class="card">
+            <div class="card__header">
+              <div>
+                <h2 class="card__title">Licencias por vencer</h2>
+                <p class="section-subtitle">Próximos 60 días</p>
+              </div>
+            </div>
+            <div class="card__body" style="padding-top:0;padding-bottom:var(--space-3)">
+              <div class="mini-list">
+                <% licenciasPorVencer.forEach(function (conductor) { %>
+                  <a href="/drivers/<%= conductor._id %>" class="mini-item">
+                    <span class="mini-item__icon mini-item__icon--warning">
+                      <i data-lucide="id-card" style="width:15px;height:15px"></i>
+                    </span>
+                    <span class="mini-item__body">
+                      <span class="mini-item__title"><%= truncar(conductor.nombre, 24) %></span>
+                      <span class="mini-item__meta">Licencia <%= conductor.categoriaLicencia %></span>
+                    </span>
+                    <span class="mini-item__side"><%= formatDate(conductor.vencimientoLicencia) %></span>
+                  </a>
+                <% }); %>
+              </div>
+            </div>
+          </section>
+        <% } %>
+
+        <!-- Mantenimientos recientes -->
+        <section class="card">
+          <div class="card__header">
+            <h2 class="card__title">Mantenimientos recientes</h2>
+            <a href="/maintenance" class="btn btn--ghost btn--sm">
+              Ver todos
+              <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+            </a>
+          </div>
+          <div class="card__body" style="padding-top:0;padding-bottom:var(--space-3)">
+            <% if (mantenimientosRecientes.length === 0) { %>
+              <p class="text-secondary text-sm" style="padding-top:var(--space-4)">
+                No hay mantenimientos registrados.
+              </p>
+            <% } else { %>
+              <div class="mini-list">
+                <% mantenimientosRecientes.forEach(function (item) { %>
+                  <a href="/vehicles/<%= item.vehiculo ? item.vehiculo._id : '' %>" class="mini-item">
+                    <span class="mini-item__icon">
+                      <i data-lucide="wrench" style="width:15px;height:15px"></i>
+                    </span>
+                    <span class="mini-item__body">
+                      <span class="mini-item__title"><%= item.tipo %></span>
+                      <span class="mini-item__meta">
+                        <%= item.vehiculo ? item.vehiculo.placa : "Vehículo eliminado" %>
+                      </span>
+                    </span>
+                    <span class="mini-item__side"><%= formatDate(item.fecha) %></span>
+                  </a>
+                <% }); %>
+              </div>
+            <% } %>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

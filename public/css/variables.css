@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Tokens de diseño — UPTC Transporte
+   Una sola fuente de verdad para color, espaciado, tipografía y elevación.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------ Superficies ---------------------------- */
+  --background: #f5f7f8;
+  --surface: #ffffff;
+  --surface-secondary: #f8fafb;
+  --surface-hover: #f2f5f7;
+
+  /* -------------------------------- Sidebar ------------------------------ */
+  --sidebar: #123f50;
+  --sidebar-hover: #194f62;
+  --sidebar-active: #1d5e75;
+  --sidebar-text: #a8c4ce;
+  --sidebar-text-active: #ffffff;
+  --sidebar-heading: #6e93a1;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+
+  /* ------------------------------- Identidad ----------------------------- */
+  --primary: #164e63;
+  --primary-hover: #0e3a49;
+  --primary-soft: #e7eff2;
+  --accent: #d7a329;
+  --accent-soft: #fbf3e0;
+
+  /* ----------------------------- Texto ----------------------------------- */
+  --text-primary: #172126;
+  --text-secondary: #647078;
+  --text-muted: #8a949a;
+  --text-inverse: #ffffff;
+
+  /* ----------------------------- Estructura ------------------------------ */
+  --border: #e5eaed;
+  --border-strong: #d4dce1;
+
+  /* ------------------------------ Semánticos ----------------------------- */
+  --success: #178a57;
+  --success-soft: #e6f4ed;
+  --warning: #d99520;
+  --warning-soft: #fdf4e3;
+  --danger: #d44848;
+  --danger-soft: #fceded;
+  --info: #3478c5;
+  --info-soft: #eaf2fb;
+
+  /* ------------------------------- Tipografía ---------------------------- */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --text-xs: 0.6875rem;   /* 11px — etiquetas de tabla */
+  --text-sm: 0.8125rem;   /* 13px — texto de apoyo */
+  --text-base: 0.875rem;  /* 14px — cuerpo */
+  --text-md: 0.9375rem;   /* 15px */
+  --text-lg: 1.0625rem;   /* 17px */
+  --text-xl: 1.25rem;     /* 20px — títulos de sección */
+  --text-2xl: 1.5rem;     /* 24px — título de página */
+  --text-3xl: 2rem;       /* 32px — cifras KPI */
+  --text-4xl: 2.5rem;     /* 40px */
+
+  /* ------------------------------- Espaciado ----------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* --------------------------------- Radio ------------------------------- */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  /* ------------------------------- Elevación ----------------------------- */
+  --shadow-xs: 0 1px 2px rgba(23, 33, 38, 0.04);
+  --shadow-sm: 0 1px 3px rgba(23, 33, 38, 0.06), 0 1px 2px rgba(23, 33, 38, 0.04);
+  --shadow: 0 2px 8px rgba(23, 33, 38, 0.06), 0 1px 3px rgba(23, 33, 38, 0.04);
+  --shadow-md: 0 8px 20px rgba(23, 33, 38, 0.08), 0 2px 6px rgba(23, 33, 38, 0.04);
+  --shadow-lg: 0 16px 40px rgba(23, 33, 38, 0.12), 0 4px 12px rgba(23, 33, 38, 0.06);
+  --ring: 0 0 0 3px rgba(22, 78, 99, 0.12);
+
+  /* ------------------------------- Movimiento ---------------------------- */
+  --transition: all 160ms ease;
+  --transition-card: transform 180ms ease, box-shadow 180ms ease;
+
+  /* --------------------------------- Layout ------------------------------ */
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+  --content-max: 1440px;
+}

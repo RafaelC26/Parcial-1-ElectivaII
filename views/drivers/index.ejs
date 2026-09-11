@@ -1,0 +1,152 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Conductores</h1>
+        <p class="page-header__subtitle">
+          Administra el personal habilitado para conducir los vehículos institucionales.
+        </p>
+      </div>
+      <div class="page-header__actions">
+        <a href="/drivers/new" class="btn btn--primary">
+          <i data-lucide="plus"></i>
+          Registrar conductor
+        </a>
+      </div>
+    </div>
+
+    <section class="card">
+
+      <form class="filters" method="GET" action="/drivers" data-filter-form>
+        <div class="filters__search">
+          <i data-lucide="search"></i>
+          <input type="search" name="q" value="<%= filtros.q %>"
+                 placeholder="Buscar por nombre, documento o licencia..."
+                 aria-label="Buscar conductores">
+        </div>
+
+        <select name="estado" class="filters__select" aria-label="Filtrar por estado">
+          <option value="">Todos los estados</option>
+          <% estados.forEach(function (estado) { %>
+            <option value="<%= estado %>" <%= filtros.estado === estado ? "selected" : "" %>><%= estado %></option>
+          <% }); %>
+        </select>
+
+        <% if (filtros.q || filtros.estado) { %>
+          <a href="/drivers" class="filters__reset">
+            <i data-lucide="x" style="width:14px;height:14px"></i>
+            Limpiar
+          </a>
+        <% } %>
+      </form>
+
+      <% if (drivers.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <i data-lucide="users" style="width:22px;height:22px"></i>
+          </div>
+          <% if (filtros.q || filtros.estado) { %>
+            <h3 class="empty-state__title">Sin resultados</h3>
+            <p class="empty-state__text">No se encontraron conductores con los filtros aplicados.</p>
+            <a href="/drivers" class="btn btn--secondary">Limpiar filtros</a>
+          <% } else { %>
+            <h3 class="empty-state__title">No hay conductores registrados</h3>
+            <p class="empty-state__text">
+              Registra el primer conductor para poder asignar servicios de transporte.
+            </p>
+            <a href="/drivers/new" class="btn btn--primary">
+              <i data-lucide="plus"></i>
+              Registrar conductor
+            </a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Conductor</th>
+                <th>Documento</th>
+                <th>Licencia</th>
+                <th>Vence</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th class="shrink text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% drivers.forEach(function (conductor) { %>
+                <tr>
+                  <td>
+                    <div class="cell-primary">
+                      <span class="cell-primary__title"><%= conductor.nombre %></span>
+                      <span class="cell-primary__sub">
+                        <% const nServicios = serviciosPorConductor.get(String(conductor._id)) || 0; %>
+                        <% if (nServicios > 0) { %>
+                          <%= nServicios %> servicio<%= nServicios === 1 ? "" : "s" %>
+                        <% } else { %>
+                          Sin servicios asignados
+                        <% } %>
+                      </span>
+                    </div>
+                  </td>
+
+                  <td class="num text-secondary">
+                    <%= conductor.tipoDocumento %> <%= conductor.documentoFormateado %>
+                  </td>
+
+                  <td>
+                    <div class="cell-primary">
+                      <span class="cell-primary__title"><%= conductor.licencia %></span>
+                      <span class="cell-primary__sub">Categoría <%= conductor.categoriaLicencia %></span>
+                    </div>
+                  </td>
+
+                  <td class="num">
+                    <% if (conductor.licenciaVencida) { %>
+                      <span class="badge badge--danger"><%= formatDate(conductor.vencimientoLicencia) %></span>
+                    <% } else { %>
+                      <span class="text-secondary"><%= formatDate(conductor.vencimientoLicencia) %></span>
+                    <% } %>
+                  </td>
+
+                  <td class="num text-secondary"><%= conductor.telefono %></td>
+
+                  <td>
+                    <span class="badge <%= badgeClass(conductor.estado) %>"><%= conductor.estado %></span>
+                  </td>
+
+                  <td class="shrink">
+                    <div class="table-actions">
+                      <a href="/drivers/<%= conductor._id %>" class="btn btn--secondary btn--sm">Ver</a>
+                      <a href="/drivers/<%= conductor._id %>/edit"
+                         class="btn btn--ghost btn--sm btn--icon"
+                         aria-label="Editar <%= conductor.nombre %>">
+                        <i data-lucide="pencil" style="width:15px;height:15px"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-count">
+          <%= drivers.length %> conductor<%= drivers.length === 1 ? "" : "es" %>
+          <%= (filtros.q || filtros.estado) ? "encontrados" : "registrados" %>
+        </div>
+      <% } %>
+
+    </section>
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

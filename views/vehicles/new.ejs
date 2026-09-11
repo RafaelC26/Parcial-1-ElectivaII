@@ -1,0 +1,145 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/vehicles" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      Vehículos
+    </a>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Registrar vehículo</h1>
+        <p class="page-header__subtitle">
+          Agrega un vehículo a la flota de la Seccional Sogamoso.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-layout">
+      <%- include("../partials/form-errors", { errores }) %>
+
+      <form method="POST" action="/vehicles" data-submit-once novalidate>
+        <section class="card card--pad form-section">
+          <h2 class="form-section__title">Información general</h2>
+          <p class="form-section__hint">Datos de identificación del vehículo.</p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="tipo">
+                Tipo de vehículo <span class="field__required">*</span>
+              </label>
+              <select id="tipo" name="tipo" class="select" required>
+                <option value="">Seleccionar tipo</option>
+                <% tipos.forEach(function (tipo) { %>
+                  <option value="<%= tipo %>" <%= valores.tipo === tipo ? "selected" : "" %>><%= tipo %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="placa">
+                Placa <span class="field__required">*</span>
+              </label>
+              <input
+                type="text"
+                id="placa"
+                name="placa"
+                class="input"
+                value="<%= valores.placa || '' %>"
+                placeholder="ABC-123"
+                data-placa
+                required>
+              <span class="field__hint">Se guarda en mayúsculas y con guion.</span>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="marca">
+                Marca <span class="field__required">*</span>
+              </label>
+              <input type="text" id="marca" name="marca" class="input"
+                     value="<%= valores.marca || '' %>" placeholder="Mercedes Benz" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="modelo">
+                Modelo <span class="field__required">*</span>
+              </label>
+              <input type="text" id="modelo" name="modelo" class="input"
+                     value="<%= valores.modelo || '' %>" placeholder="OF-1721" required>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card--pad form-section">
+          <h2 class="form-section__title">Características y estado</h2>
+          <p class="form-section__hint">Capacidad y condición operativa actual.</p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="anio">
+                Año <span class="field__required">*</span>
+              </label>
+              <input type="number" id="anio" name="anio" class="input"
+                     value="<%= valores.anio || '' %>" placeholder="2022"
+                     min="1950" max="<%= new Date().getFullYear() + 1 %>" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="capacidad">
+                Capacidad <span class="field__required">*</span>
+              </label>
+              <div class="input-group">
+                <input type="number" id="capacidad" name="capacidad" class="input"
+                       value="<%= valores.capacidad || '' %>" placeholder="40" min="1" required>
+                <span class="input-group__suffix">pasajeros</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="kilometraje">Kilometraje</label>
+              <div class="input-group">
+                <input type="number" id="kilometraje" name="kilometraje" class="input"
+                       value="<%= valores.kilometraje !== undefined ? valores.kilometraje : 0 %>"
+                       placeholder="125000" min="0">
+                <span class="input-group__suffix">km</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="estado">Estado</label>
+              <select id="estado" name="estado" class="select">
+                <% estados.forEach(function (estado) { %>
+                  <option value="<%= estado %>"
+                    <%= (valores.estado || "Disponible") === estado ? "selected" : "" %>><%= estado %></option>
+                <% }); %>
+              </select>
+              <span class="field__hint">
+                Los vehículos en mantenimiento o fuera de servicio no pueden asignarse.
+              </span>
+            </div>
+
+            <div class="field field--full">
+              <label class="field__label" for="observaciones">Observaciones</label>
+              <textarea id="observaciones" name="observaciones" class="textarea"
+                        placeholder="Información adicional sobre el vehículo..."><%= valores.observaciones || "" %></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="/vehicles" class="btn btn--secondary">Cancelar</a>
+            <button type="submit" class="btn btn--primary">Guardar vehículo</button>
+          </div>
+        </section>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

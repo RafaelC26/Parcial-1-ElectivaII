@@ -1,0 +1,114 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/vehicles/<%= vehiculo._id %>" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      <%= vehiculo.marca %> <%= vehiculo.modelo %>
+    </a>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Registrar mantenimiento</h1>
+        <p class="page-header__subtitle">
+          Vehículo <strong><%= vehiculo.placa %></strong> —
+          <%= vehiculo.marca %> <%= vehiculo.modelo %>
+        </p>
+      </div>
+    </div>
+
+    <div class="form-layout">
+      <%- include("../partials/form-errors", { errores }) %>
+
+      <form method="POST" action="/vehicles/<%= vehiculo._id %>/maintenance" data-submit-once novalidate>
+        <section class="card card--pad form-section">
+          <h2 class="form-section__title">Datos del mantenimiento</h2>
+          <p class="form-section__hint">
+            Si el kilometraje reportado es mayor al registrado, se actualiza en el vehículo.
+          </p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="fecha">
+                Fecha <span class="field__required">*</span>
+              </label>
+              <input type="date" id="fecha" name="fecha" class="input"
+                     value="<%= valores.fecha ? toDateInput(valores.fecha) : toDateInput(new Date()) %>" required>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="tipo">
+                Tipo de mantenimiento <span class="field__required">*</span>
+              </label>
+              <select id="tipo" name="tipo" class="select" required>
+                <option value="">Seleccionar tipo</option>
+                <% tipos.forEach(function (tipo) { %>
+                  <option value="<%= tipo %>" <%= valores.tipo === tipo ? "selected" : "" %>><%= tipo %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="kilometraje">Kilometraje</label>
+              <div class="input-group">
+                <input type="number" id="kilometraje" name="kilometraje" class="input"
+                       value="<%= valores.kilometraje !== undefined ? valores.kilometraje : '' %>" min="0">
+                <span class="input-group__suffix">km</span>
+              </div>
+              <span class="field__hint">
+                Actual: <%= formatNumber(vehiculo.kilometraje) %> km
+              </span>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="costo">Costo</label>
+              <input type="number" id="costo" name="costo" class="input"
+                     value="<%= valores.costo !== undefined ? valores.costo : '' %>"
+                     placeholder="450000" min="0">
+              <span class="field__hint">En pesos colombianos.</span>
+            </div>
+
+            <div class="field field--full">
+              <label class="field__label" for="descripcion">
+                Descripción <span class="field__required">*</span>
+              </label>
+              <textarea id="descripcion" name="descripcion" class="textarea"
+                        placeholder="Cambio de aceite, filtros y revisión de frenos..."
+                        required><%= valores.descripcion || "" %></textarea>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="proveedor">Taller o proveedor</label>
+              <input type="text" id="proveedor" name="proveedor" class="input"
+                     value="<%= valores.proveedor || '' %>" placeholder="Serviteca El Rodeo">
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="proximoMantenimiento">Próximo mantenimiento</label>
+              <input type="date" id="proximoMantenimiento" name="proximoMantenimiento" class="input"
+                     value="<%= valores.proximoMantenimiento ? toDateInput(valores.proximoMantenimiento) : '' %>">
+            </div>
+
+            <div class="field field--full">
+              <label class="field__label" for="observaciones">Observaciones</label>
+              <textarea id="observaciones" name="observaciones" class="textarea"><%= valores.observaciones || "" %></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="/vehicles/<%= vehiculo._id %>" class="btn btn--secondary">Cancelar</a>
+            <button type="submit" class="btn btn--primary">Guardar mantenimiento</button>
+          </div>
+        </section>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

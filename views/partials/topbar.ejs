@@ -1,0 +1,23 @@
+<header class="topbar">
+  <div class="topbar__left">
+    <button type="button" class="topbar__toggle" data-sidebar-toggle aria-label="Abrir menú">
+      <i data-lucide="menu" style="width:18px;height:18px"></i>
+    </button>
+
+    <nav class="topbar__breadcrumb" aria-label="Ruta de navegación">
+      <span class="crumb-parent">UPTC Transporte</span>
+      <i data-lucide="chevron-right" style="width:14px;height:14px" class="crumb-parent"></i>
+      <span class="current"><%= typeof titulo !== "undefined" ? titulo : "Dashboard" %></span>
+    </nav>
+  </div>
+
+  <div class="topbar__right">
+    <div class="topbar__org">
+      <div class="topbar__avatar">ST</div>
+      <div class="topbar__org-text">
+        <div class="topbar__org-name">Seccional Sogamoso</div>
+        <div class="topbar__org-sub">Oficina administrativa</div>
+      </div>
+    </div>
+  </div>
+</header>

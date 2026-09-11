@@ -1,0 +1,31 @@
+<%
+  /* Mensajes flash del backend. Se muestran como toast en la esquina. */
+  const hayMensajes = successMessages.length > 0 || errorMessages.length > 0;
+%>
+<% if (hayMensajes) { %>
+  <div class="toast-stack">
+    <% successMessages.forEach(function (mensaje) { %>
+      <div class="toast toast--success" data-toast="success" role="status">
+        <span class="toast__icon">
+          <i data-lucide="check-circle-2" style="width:18px;height:18px"></i>
+        </span>
+        <span class="toast__message"><%= mensaje %></span>
+        <button type="button" class="toast__close" data-toast-close aria-label="Cerrar">
+          <i data-lucide="x" style="width:14px;height:14px"></i>
+        </button>
+      </div>
+    <% }); %>
+
+    <% errorMessages.forEach(function (mensaje) { %>
+      <div class="toast toast--error" data-toast="error" role="alert">
+        <span class="toast__icon">
+          <i data-lucide="alert-triangle" style="width:18px;height:18px"></i>
+        </span>
+        <span class="toast__message"><%= mensaje %></span>
+        <button type="button" class="toast__close" data-toast-close aria-label="Cerrar">
+          <i data-lucide="x" style="width:14px;height:14px"></i>
+        </button>
+      </div>
+    <% }); %>
+  </div>
+<% } %>

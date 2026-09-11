@@ -1,0 +1,246 @@
+/* ==========================================================================
+   Formularios: campos, grupos, secciones y tarjeta de vista previa
+   ========================================================================== */
+
+.form-layout {
+  max-width: 780px;
+}
+
+.form-section + .form-section {
+  margin-top: var(--space-6);
+}
+
+.form-section__title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.form-section__hint {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-5);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.form-grid--single { grid-template-columns: 1fr; }
+.form-grid--three  { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.field--full { grid-column: 1 / -1; }
+
+.field__label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.field__required { color: var(--danger); }
+
+.field__hint {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 0 var(--space-3);
+  height: 40px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-family: inherit;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+.input::placeholder,
+.textarea::placeholder { color: var(--text-muted); }
+
+.input:hover,
+.select:hover,
+.textarea:hover { border-color: var(--text-muted); }
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--ring);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+  background: var(--surface-secondary);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.textarea {
+  height: auto;
+  min-height: 92px;
+  padding: var(--space-3);
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.select {
+  cursor: pointer;
+  padding-right: var(--space-8);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238A949A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+}
+
+/* Campo con unidad a la derecha ("40 pasajeros", "km") */
+.input-group { position: relative; display: flex; align-items: center; }
+.input-group .input { padding-right: 86px; }
+
+.input-group__suffix {
+  position: absolute;
+  right: var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  pointer-events: none;
+}
+
+/* Acciones al pie del formulario */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+/* -------------------- Vista previa del vehículo/conductor ------------------ */
+
+.preview-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-secondary);
+  margin-top: var(--space-2);
+}
+
+.preview-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.preview-card__body { min-width: 0; flex: 1; }
+
+.preview-card__title { font-weight: 500; }
+
+.preview-card__meta {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.preview-card__meta .dot { color: var(--border-strong); }
+
+/* ---------------------------- Detalle (show) ------------------------------ */
+
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.detail-header__main { display: flex; align-items: flex-start; gap: var(--space-4); min-width: 0; }
+
+.detail-header__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.detail-header__title {
+  font-size: var(--text-2xl);
+  line-height: 1.2;
+  margin-bottom: var(--space-2);
+}
+
+.detail-header__sub {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.7fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* Las tablas del detalle comparten ancho con la columna lateral, así que
+   usan celdas algo más compactas para evitar el scroll horizontal. */
+.detail-grid .table thead th,
+.detail-grid .table tbody td {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.detail-grid .table tbody td { height: 56px; }
+
+.info-list { display: flex; flex-direction: column; }
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+}
+
+.info-row + .info-row { border-top: 1px solid var(--border); }
+
+.info-row__label {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.info-row__value {
+  text-align: right;
+  font-weight: 500;
+  min-width: 0;
+  word-break: break-word;
+}

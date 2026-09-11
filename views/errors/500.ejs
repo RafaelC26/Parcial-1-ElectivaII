@@ -1,0 +1,27 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+
+  <main class="content">
+    <section class="card">
+      <div class="empty-state" style="padding:var(--space-16) var(--space-6)">
+        <div class="empty-state__icon" style="width:56px;height:56px;background:var(--danger-soft);color:var(--danger)">
+          <i data-lucide="alert-triangle" style="width:26px;height:26px"></i>
+        </div>
+        <h1 class="empty-state__title" style="font-size:var(--text-xl)">Algo salió mal</h1>
+        <p class="empty-state__text">
+          <%= typeof message !== "undefined" ? message : "No pudimos completar la operación." %>
+          Intenta nuevamente.
+        </p>
+        <a href="/" class="btn btn--primary">
+          <i data-lucide="layout-dashboard"></i>
+          Volver al dashboard
+        </a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

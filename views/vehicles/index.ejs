@@ -1,0 +1,154 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Vehículos</h1>
+        <p class="page-header__subtitle">
+          Gestiona la flota disponible para los servicios institucionales.
+        </p>
+      </div>
+      <div class="page-header__actions">
+        <a href="/vehicles/new" class="btn btn--primary">
+          <i data-lucide="plus"></i>
+          Registrar vehículo
+        </a>
+      </div>
+    </div>
+
+    <section class="card">
+
+      <!-- ------------------------------- Filtros ------------------------------ -->
+      <form class="filters" method="GET" action="/vehicles" data-filter-form>
+        <div class="filters__search">
+          <i data-lucide="search"></i>
+          <input
+            type="search"
+            name="q"
+            value="<%= filtros.q %>"
+            placeholder="Buscar por placa, marca o modelo..."
+            aria-label="Buscar vehículos">
+        </div>
+
+        <select name="tipo" class="filters__select" aria-label="Filtrar por tipo">
+          <option value="">Todos los tipos</option>
+          <% tipos.forEach(function (tipo) { %>
+            <option value="<%= tipo %>" <%= filtros.tipo === tipo ? "selected" : "" %>><%= tipo %></option>
+          <% }); %>
+        </select>
+
+        <select name="estado" class="filters__select" aria-label="Filtrar por estado">
+          <option value="">Todos los estados</option>
+          <% estados.forEach(function (estado) { %>
+            <option value="<%= estado %>" <%= filtros.estado === estado ? "selected" : "" %>><%= estado %></option>
+          <% }); %>
+        </select>
+
+        <% if (filtros.q || filtros.tipo || filtros.estado) { %>
+          <a href="/vehicles" class="filters__reset">
+            <i data-lucide="x" style="width:14px;height:14px"></i>
+            Limpiar
+          </a>
+        <% } %>
+      </form>
+
+      <!-- -------------------------------- Tabla ------------------------------- -->
+      <% if (vehicles.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <i data-lucide="bus-front" style="width:22px;height:22px"></i>
+          </div>
+          <% if (filtros.q || filtros.tipo || filtros.estado) { %>
+            <h3 class="empty-state__title">Sin resultados</h3>
+            <p class="empty-state__text">
+              No se encontraron vehículos que coincidan con los filtros aplicados.
+            </p>
+            <a href="/vehicles" class="btn btn--secondary">Limpiar filtros</a>
+          <% } else { %>
+            <h3 class="empty-state__title">No hay vehículos registrados</h3>
+            <p class="empty-state__text">
+              Registra el primer vehículo de la flota para comenzar.
+            </p>
+            <a href="/vehicles/new" class="btn btn--primary">
+              <i data-lucide="plus"></i>
+              Registrar vehículo
+            </a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Vehículo</th>
+                <th>Placa</th>
+                <th>Tipo</th>
+                <th>Capacidad</th>
+                <th>Kilometraje</th>
+                <th>Estado</th>
+                <th class="shrink text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% vehicles.forEach(function (vehiculo) { %>
+                <tr>
+                  <td>
+                    <div class="cell-primary">
+                      <span class="cell-primary__title">
+                        <%= vehiculo.marca %> <%= vehiculo.modelo %>
+                      </span>
+                      <span class="cell-primary__sub">
+                        Año <%= vehiculo.anio %>
+                        <% const nServicios = serviciosPorVehiculo.get(String(vehiculo._id)) || 0; %>
+                        <% if (nServicios > 0) { %>
+                          · <%= nServicios %> servicio<%= nServicios === 1 ? "" : "s" %>
+                        <% } %>
+                      </span>
+                    </div>
+                  </td>
+
+                  <td><span class="plate"><%= vehiculo.placa %></span></td>
+
+                  <td class="text-secondary"><%= vehiculo.tipo %></td>
+
+                  <td class="num"><%= vehiculo.capacidad %> pasajeros</td>
+
+                  <td class="num text-secondary"><%= formatNumber(vehiculo.kilometraje) %> km</td>
+
+                  <td>
+                    <span class="badge <%= badgeClass(vehiculo.estado) %>"><%= vehiculo.estado %></span>
+                  </td>
+
+                  <td class="shrink">
+                    <div class="table-actions">
+                      <a href="/vehicles/<%= vehiculo._id %>" class="btn btn--secondary btn--sm">Ver</a>
+                      <a href="/vehicles/<%= vehiculo._id %>/edit"
+                         class="btn btn--ghost btn--sm btn--icon"
+                         aria-label="Editar <%= vehiculo.placa %>">
+                        <i data-lucide="pencil" style="width:15px;height:15px"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-count">
+          <%= vehicles.length %> vehículo<%= vehicles.length === 1 ? "" : "s" %>
+          <%= (filtros.q || filtros.tipo || filtros.estado) ? "encontrados" : "en la flota" %>
+        </div>
+      <% } %>
+
+    </section>
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

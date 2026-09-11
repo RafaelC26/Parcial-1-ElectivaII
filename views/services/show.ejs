@@ -1,0 +1,220 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/services" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      Servicios
+    </a>
+
+    <div class="detail-header">
+      <div class="detail-header__main">
+        <div class="detail-header__icon">
+          <i data-lucide="route" style="width:24px;height:24px"></i>
+        </div>
+        <div>
+          <h1 class="detail-header__title"><%= servicio.codigo %></h1>
+          <div class="detail-header__sub">
+            <span class="text-secondary"><%= servicio.tipoServicio %></span>
+            <span class="badge <%= badgeClass(servicio.enCursoAhora ? 'En curso' : servicio.estado) %>">
+              <%= servicio.enCursoAhora ? "En curso" : servicio.estado %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-header__actions detail-header__actions">
+        <% if (servicio.estado !== "Cancelado") { %>
+          <a href="/services/<%= servicio._id %>/edit" class="btn btn--secondary">
+            <i data-lucide="pencil"></i>
+            Editar
+          </a>
+          <form method="POST" action="/services/<%= servicio._id %>/cancel"
+                data-confirm="¿Cancelar el servicio <%= servicio.codigo %>? El vehículo y el conductor quedarán libres en ese horario."
+                data-confirm-title="Cancelar servicio"
+                data-confirm-button="Cancelar servicio"
+                style="display:inline">
+            <button type="submit" class="btn btn--secondary">
+              <i data-lucide="ban"></i>
+              Cancelar servicio
+            </button>
+          </form>
+        <% } %>
+        <form method="POST" action="/services/<%= servicio._id %>/delete"
+              data-confirm="¿Estás seguro de eliminar el servicio <%= servicio.codigo %>?"
+              data-confirm-title="Eliminar servicio"
+              style="display:inline">
+          <button type="submit" class="btn btn--danger-soft">
+            <i data-lucide="trash-2"></i>
+            Eliminar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+
+      <!-- --------------------- Información del servicio -------------------- -->
+      <div class="stack stack-6">
+        <section class="card">
+          <div class="card__header">
+            <h2 class="card__title">Información del servicio</h2>
+          </div>
+          <div class="card__body">
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-item__label">Fecha</div>
+                <div class="summary-item__value"><%= formatLongDate(servicio.fecha) %></div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-item__label">Hora salida</div>
+                <div class="summary-item__value num"><%= formatTime(servicio.horaSalida) %></div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-item__label">Regreso</div>
+                <div class="summary-item__value num"><%= formatTime(servicio.horaRegreso) %></div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-item__label">Pasajeros</div>
+                <div class="summary-item__value num"><%= servicio.pasajeros %></div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-item__label">Ruta</div>
+                <div class="summary-item__value">
+                  <%= servicio.origen %> → <%= servicio.destino %>
+                </div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-item__label">Responsable</div>
+                <div class="summary-item__value"><%= servicio.responsable %></div>
+              </div>
+              <% if (servicio.telefonoResponsable) { %>
+                <div class="summary-item">
+                  <div class="summary-item__label">Teléfono</div>
+                  <div class="summary-item__value num"><%= servicio.telefonoResponsable %></div>
+                </div>
+              <% } %>
+            </div>
+
+            <hr class="divider">
+
+            <div class="summary-item">
+              <div class="summary-item__label">Descripción o motivo</div>
+              <div class="summary-item__value"><%= servicio.descripcion %></div>
+            </div>
+
+            <% if (servicio.observaciones && servicio.observaciones.trim()) { %>
+              <div class="summary-item" style="margin-top:var(--space-5)">
+                <div class="summary-item__label">Observaciones</div>
+                <div class="summary-item__value text-secondary"><%= servicio.observaciones %></div>
+              </div>
+            <% } %>
+          </div>
+        </section>
+      </div>
+
+      <!-- ----------------------- Vehículo y conductor ---------------------- -->
+      <div class="stack stack-6">
+
+        <section class="card">
+          <div class="card__header">
+            <h2 class="card__title">Vehículo asignado</h2>
+          </div>
+          <div class="card__body">
+            <% if (servicio.vehiculo) { %>
+              <a href="/vehicles/<%= servicio.vehiculo._id %>" class="preview-card" style="margin-top:0">
+                <div class="preview-card__icon">
+                  <i data-lucide="<%= iconoVehiculo(servicio.vehiculo.tipo) %>" style="width:20px;height:20px"></i>
+                </div>
+                <div class="preview-card__body">
+                  <div class="preview-card__title">
+                    <%= servicio.vehiculo.marca %> <%= servicio.vehiculo.modelo %>
+                  </div>
+                  <div class="preview-card__meta">
+                    <span class="plate"><%= servicio.vehiculo.placa %></span>
+                    <span><%= servicio.vehiculo.tipo %></span>
+                    <span class="dot">·</span>
+                    <span>Capacidad <%= servicio.vehiculo.capacidad %></span>
+                  </div>
+                </div>
+              </a>
+
+              <div class="info-list" style="margin-top:var(--space-4)">
+                <div class="info-row">
+                  <span class="info-row__label">Ocupación</span>
+                  <span class="info-row__value">
+                    <%= servicio.pasajeros %> / <%= servicio.vehiculo.capacidad %>
+                    (<%= Math.round((servicio.pasajeros / servicio.vehiculo.capacidad) * 100) %>%)
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-row__label">Estado operativo</span>
+                  <span class="info-row__value">
+                    <span class="badge <%= badgeClass(servicio.vehiculo.estado) %>">
+                      <%= servicio.vehiculo.estado %>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            <% } else { %>
+              <p class="text-muted">El vehículo asignado ya no existe.</p>
+            <% } %>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card__header">
+            <h2 class="card__title">Conductor</h2>
+          </div>
+          <div class="card__body">
+            <% if (servicio.conductor) { %>
+              <a href="/drivers/<%= servicio.conductor._id %>" class="preview-card" style="margin-top:0">
+                <div class="preview-card__icon"><%= iniciales(servicio.conductor.nombre) %></div>
+                <div class="preview-card__body">
+                  <div class="preview-card__title"><%= servicio.conductor.nombre %></div>
+                  <div class="preview-card__meta">
+                    <span>
+                      <%= servicio.conductor.tipoDocumento %> <%= servicio.conductor.documentoFormateado %>
+                    </span>
+                    <span class="dot">·</span>
+                    <span>Licencia <%= servicio.conductor.categoriaLicencia %></span>
+                  </div>
+                </div>
+              </a>
+
+              <div class="info-list" style="margin-top:var(--space-4)">
+                <div class="info-row">
+                  <span class="info-row__label">Teléfono</span>
+                  <span class="info-row__value"><%= servicio.conductor.telefono %></span>
+                </div>
+                <div class="info-row">
+                  <span class="info-row__label">Licencia vence</span>
+                  <span class="info-row__value">
+                    <% if (servicio.conductor.licenciaVencida) { %>
+                      <span class="badge badge--danger">
+                        <%= formatDate(servicio.conductor.vencimientoLicencia) %>
+                      </span>
+                    <% } else { %>
+                      <%= formatDate(servicio.conductor.vencimientoLicencia) %>
+                    <% } %>
+                  </span>
+                </div>
+              </div>
+            <% } else { %>
+              <p class="text-muted">El conductor asignado ya no existe.</p>
+            <% } %>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

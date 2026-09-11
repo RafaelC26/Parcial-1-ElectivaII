@@ -1,0 +1,33 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <a href="/services/<%= servicio._id %>" class="back-link">
+      <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+      <%= servicio.codigo %>
+    </a>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Editar servicio</h1>
+        <p class="page-header__subtitle">
+          Actualiza la programación de <strong><%= servicio.codigo %></strong>.
+          Los cambios se revalidan contra la agenda del vehículo y del conductor.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-layout">
+      <%- include("../partials/form-errors", { errores }) %>
+      <%- include("./_form", { accion: "/services/" + servicio._id + "/update", esEdicion: true }) %>
+    </div>
+
+  </main>
+</div>
+
+<%- include("../partials/footer") %>

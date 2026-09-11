@@ -1,0 +1,67 @@
+<%
+  /* Marca el ítem activo comparando el inicio de la ruta actual. */
+  const esActivo = (prefijo) => {
+    if (prefijo === "/") return currentPath === "/";
+    return currentPath.startsWith(prefijo);
+  };
+%>
+<aside class="sidebar" data-sidebar>
+  <div class="sidebar__brand">
+    <div class="sidebar__logo">
+      <i data-lucide="bus-front" style="width:20px;height:20px"></i>
+    </div>
+    <div class="sidebar__brand-text">
+      <div class="sidebar__brand-name">UPTC</div>
+      <div class="sidebar__brand-sub">Transporte</div>
+    </div>
+  </div>
+
+  <nav class="sidebar__nav">
+    <div class="sidebar__group">
+      <a href="/" class="sidebar__link <%= esActivo('/') ? 'is-active' : '' %>">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Dashboard</span>
+      </a>
+    </div>
+
+    <div class="sidebar__group">
+      <div class="sidebar__group-label">Transporte</div>
+
+      <a href="/vehicles" class="sidebar__link <%= esActivo('/vehicles') ? 'is-active' : '' %>">
+        <i data-lucide="bus-front"></i>
+        <span>Vehículos</span>
+      </a>
+
+      <a href="/drivers" class="sidebar__link <%= esActivo('/drivers') ? 'is-active' : '' %>">
+        <i data-lucide="users"></i>
+        <span>Conductores</span>
+      </a>
+
+      <a href="/services" class="sidebar__link <%= esActivo('/services') ? 'is-active' : '' %>">
+        <i data-lucide="route"></i>
+        <span>Servicios</span>
+      </a>
+    </div>
+
+    <div class="sidebar__group">
+      <div class="sidebar__group-label">Gestión</div>
+
+      <a href="/maintenance" class="sidebar__link <%= esActivo('/maintenance') ? 'is-active' : '' %>">
+        <i data-lucide="wrench"></i>
+        <span>Mantenimientos</span>
+      </a>
+
+      <a href="/reports" class="sidebar__link <%= esActivo('/reports') ? 'is-active' : '' %>">
+        <i data-lucide="file-text"></i>
+        <span>Informes</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="sidebar__footer">
+    <strong>UPTC Sogamoso</strong><br>
+    Oficina de Transporte
+  </div>
+</aside>
+
+<div class="sidebar-overlay" data-sidebar-overlay></div>

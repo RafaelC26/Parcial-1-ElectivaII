@@ -1,0 +1,142 @@
+<%- include("../partials/head") %>
+<%- include("../partials/sidebar") %>
+
+<div class="main">
+  <%- include("../partials/topbar") %>
+  <%- include("../partials/alerts") %>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Mantenimientos</h1>
+        <p class="page-header__subtitle">
+          Historial de intervenciones realizadas sobre la flota institucional.
+        </p>
+      </div>
+    </div>
+
+    <section class="card">
+
+      <form class="filters" method="GET" action="/maintenance" data-filter-form>
+        <select name="vehiculo" class="filters__select" aria-label="Filtrar por vehículo">
+          <option value="">Todos los vehículos</option>
+          <% vehiculos.forEach(function (vehiculo) { %>
+            <option value="<%= vehiculo._id %>"
+              <%= String(filtros.vehiculo) === String(vehiculo._id) ? "selected" : "" %>>
+              <%= vehiculo.placa %> — <%= vehiculo.marca %>
+            </option>
+          <% }); %>
+        </select>
+
+        <select name="tipo" class="filters__select" aria-label="Filtrar por tipo">
+          <option value="">Todos los tipos</option>
+          <% tipos.forEach(function (tipo) { %>
+            <option value="<%= tipo %>" <%= filtros.tipo === tipo ? "selected" : "" %>><%= tipo %></option>
+          <% }); %>
+        </select>
+
+        <% if (filtros.vehiculo || filtros.tipo) { %>
+          <a href="/maintenance" class="filters__reset">
+            <i data-lucide="x" style="width:14px;height:14px"></i>
+            Limpiar
+          </a>
+        <% } %>
+      </form>
+
+      <% if (mantenimientos.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <i data-lucide="wrench" style="width:22px;height:22px"></i>
+          </div>
+          <% if (filtros.vehiculo || filtros.tipo) { %>
+            <h3 class="empty-state__title">Sin resultados</h3>
+            <p class="empty-state__text">No se encontraron mantenimientos con los filtros aplicados.</p>
+            <a href="/maintenance" class="btn btn--secondary">Limpiar filtros</a>
+          <% } else { %>
+            <h3 class="empty-state__title">No hay mantenimientos registrados</h3>
+            <p class="empty-state__text">
+              Los mantenimientos se registran desde la ficha de cada vehículo.
+            </p>
+            <a href="/vehicles" class="btn btn--primary">Ir a vehículos</a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Vehículo</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Proveedor</th>
+                <th class="text-right">Costo</th>
+                <th>Próximo</th>
+                <th class="shrink text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% mantenimientos.forEach(function (item) { %>
+                <tr>
+                  <td class="num"><%= formatDate(item.fecha) %></td>
+
+                  <td>
+                    <% if (item.vehiculo) { %>
+                      <div class="cell-primary">
+                        <span class="cell-primary__title"><%= item.vehiculo.placa %></span>
+                        <span class="cell-primary__sub">
+                          <%= item.vehiculo.marca %> <%= item.vehiculo.modelo %>
+                        </span>
+                      </div>
+                    <% } else { %>
+                      <span class="text-muted">Vehículo eliminado</span>
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <span class="badge badge--neutral badge--plain"><%= item.tipo %></span>
+                  </td>
+
+                  <td><%= truncar(item.descripcion, 38) %></td>
+
+                  <td class="text-secondary"><%= item.proveedor || "—" %></td>
+
+                  <td class="num text-right"><%= formatCurrency(item.costo) %></td>
+
+                  <td class="num text-secondary"><%= formatDate(item.proximoMantenimiento) %></td>
+
+                  <td class="shrink">
+                    <div class="table-actions">
+                      <a href="/maintenance/<%= item._id %>/edit"
+                         class="btn btn--ghost btn--sm btn--icon" aria-label="Editar mantenimiento">
+                        <i data-lucide="pencil" style="width:15px;height:15px"></i>
+                      </a>
+                      <form method="POST" action="/maintenance/<%= item._id %>/delete"
+                            data-confirm="¿Eliminar este registro de mantenimiento del <%= formatDate(item.fecha) %>?"
+                            data-confirm-title="Eliminar mantenimiento"
+                            style="display:inline">
+                        <button type="submit" class="btn btn--ghost btn--sm btn--icon"
+                                aria-label="Eliminar mantenimiento">
+                          <i data-lucide="trash-2" style="width:15px;height:15px"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-count">
+          <%= mantenimientos.length %> mantenimiento<%= mantenimientos.length === 1 ? "" : "s" %>
+          · Costo total <%= formatCurrency(costoTotal) %>
+        </div>
+      <% } %>
+
+    </section>
+  </main>
+</div>
+
+<%- include("../partials/footer") %>
