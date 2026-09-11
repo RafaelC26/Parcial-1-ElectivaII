@@ -34,13 +34,9 @@ cd Parcial-1-ElectivaII
 npm install
 ```
 
-Crear el archivo `.env` a partir de la plantilla:
-
-```bash
-cp .env.example .env
-```
-
-Y completar la cadena de conexión de MongoDB Atlas:
+El archivo `.env` viene incluido en el repositorio con la conexión al cluster
+de MongoDB Atlas ya configurada, así que no hay que crear nada: tras el
+`npm install` el proyecto queda listo para ejecutarse.
 
 ```env
 PORT=3000
@@ -48,6 +44,10 @@ MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/uptc_transportes
 NODE_ENV=development
 SESSION_SECRET=un-valor-propio
 ```
+
+> Esto es posible porque el repositorio es **privado**. En un proyecto público
+> las credenciales nunca deben versionarse: se distribuiría solo una plantilla
+> `.env.example` y cada persona pondría las suyas.
 
 Cargar datos de ejemplo (opcional, pero recomendado para la demostración):
 
@@ -356,11 +356,15 @@ GET    /reports/vehicle?vehicleId=...&startDate=2026-09-01&endDate=2026-09-30
 
 ---
 
-## Seguridad de configuración
+## Configuración
 
-- `.env` está en `.gitignore` y **nunca** se sube al repositorio.
-- `.env.example` documenta las variables necesarias sin exponer credenciales.
-- Las credenciales de MongoDB Atlas viven únicamente en el `.env` local.
+- El repositorio es **privado**, y por eso `.env` y `atlas-credentials.env` se
+  versionan: quien clone obtiene un proyecto que arranca sin configuración previa.
+- `node_modules/` queda fuera del repositorio; se reconstruye con `npm install`
+  a partir de `package.json` y `package-lock.json`.
+- Si el repositorio se hiciera público en algún momento, habría que rotar la
+  contraseña del usuario de Atlas y dejar de versionar los `.env`, ya que el
+  historial de git conserva los archivos aunque se borren en un commit posterior.
 
 ---
 
