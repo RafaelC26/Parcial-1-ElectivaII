@@ -1,5 +1,9 @@
 node_modules/
+
+# Variables de entorno: cualquier archivo .env queda fuera del repositorio.
+# .env.example no coincide con el patron y si se versiona.
 .env
+*.env
 .DS_Store
 npm-debug.log
 npm-debug.log*
